@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html class="no-js">
+<head>
+  <title>Alessandro Masciosci - Portfolio</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <style type="text/css">
+    /* =========================================
+       1. CODICE ORIGINALE TROVATO DA TE
+       (Gestisce animazioni e transizioni)
+       ========================================= */
+    
+    .disable-download img { pointer-events: none; }
+
+    /* Keyframes per rotazioni (spinner) */
+    @-webkit-keyframes rotate-forever { 0% { -webkit-transform: rotate(0deg); transform: rotate(0deg); } 100% { -webkit-transform: rotate(360deg); transform: rotate(360deg); } }
+    @-moz-keyframes rotate-forever { 0% { -moz-transform: rotate(0deg); transform: rotate(0deg); } 100% { -moz-transform: rotate(360deg); transform: rotate(360deg); } }
+    @keyframes rotate-forever { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    /* Keyframes per dissolvenze (Pagina) */
+    @-webkit-keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+    
+    @-webkit-keyframes fade-out { from { opacity: 1; } to { opacity: 0; } }
+    @keyframes fade-out { from { opacity: 1; } to { opacity: 0; } }
+
+    /* Classi di transizione Adobe */
+    .transition-enabled { opacity: 0; } /* Parte invisibile */
+    
+    .transition-in {
+      -webkit-animation: fade-in ease-in;
+      animation: fade-in ease-in;
+      -webkit-animation-duration: 0.5s; /* Ho rallentato leggermente per eleganza */
+      animation-duration: 0.5s;
+      -webkit-animation-fill-mode: forwards;
+      animation-fill-mode: forwards;
+    }
+
+    .transition-out {
+      opacity: 1;
+      -webkit-animation: fade-out ease-out;
+      animation: fade-out ease-out;
+      -webkit-animation-duration: 0.25s;
+      animation-duration: 0.25s;
+      -webkit-animation-fill-mode: forwards;
+      animation-fill-mode: forwards;
+    }
+
+    /* Lightbox Spinner (Caricamento) */
+    .lightbox-spinner {
+      animation: rotate-forever 0.7s infinite linear;
+      height: 30px; width: 30px;
+      border: 4px solid #fff;
+      border-right-color: transparent;
+      border-radius: 50%;
+      display: inline-block;
+      opacity: 0.7;
+    }
+
+    /* =========================================
+       2. RICOSTRUZIONE STRUTTURA ADOBE (Layout)
+       (Replica pixel-perfect della griglia mancante)
+       ========================================= */
+
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: "vcsm", "Helvetica Neue", Helvetica, Arial, sans-serif; /* Font Stack Adobe */
+        background-color: #ffffff;
+        color: #111;
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden; /* Previene scroll orizzontale */
+    }
+
+    a { text-decoration: none; color: inherit; }
+
+    /* Header */
+    .site-header {
+        padding: 45px 0 30px 0;
+        text-align: center;
+        width: 100%;
+    }
+    
+    .logo a {
+        font-weight: 700;
+        font-size: 24px;
+        letter-spacing: -0.5px;
+        color: #000;
+        text-transform: uppercase;
+    }
+
+    /* Masthead (Testo centrale) */
+    .masthead {
+        padding: 40px 20px 70px 20px;
+        text-align: center;
+        max-width: 740px;
+        margin: 0 auto;
+    }
+    
+    .masthead h1 {
+        font-weight: 300;
+        font-size: 32px;
+        line-height: 1.35;
+        margin: 0 0 30px 0;
+        color: #111;
+    }
+
+    .masthead p {
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 2px;
+        color: #999;
+        text-transform: uppercase;
+        margin-top: 20px;
+    }
+
+    /* Griglia Progetti */
+    .site-content {
+        max-width: 1440px;
+        margin: 0 auto;
+        padding: 0 40px;
+        box-sizing: border-box;
+    }
+
+    .project-covers {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0 -20px; /* Offset negativo per i gutter */
+    }
+
+    .project-cover {
+        /* Struttura a 3 colonne esatta */
+        width: 33.3333%; 
+        box-sizing: border-box;
+        padding: 0 20px 60px 20px;
+        display: block;
+        cursor: pointer;
+    }
+
+    /* Immagini */
+    .cover-content-container {
+        display: block;
+        position: relative;
+    }
+
+    .cover-image-wrap {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+        background-color: #f4f4f4; /* Placeholder */
+        line-height: 0;
+    }
+
+    .cover__img {
+        width: 100%;
+        height: auto;
+        display: block;
+        opacity: 0; /* Gestito dal JS lazy load */
+        transition: opacity 0.5s ease, transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        transform: scale(1);
+    }
+    
+    .cover__img.loaded {
+        opacity: 1;
+    }
+
+    /* Hover Effect Adobe */
+    .project-cover:hover .cover__img {
+        transform: scale(1.02); /* Zoom delicato */
+        opacity: 0.95;
+    }
+
+    /* Dettagli Testo */
+    .details-wrap {
+        margin-top: 18px;
+        text-align: left; /* O center, a seconda del tema */
+        padding-left: 2px;
+    }
+
+    .details .title {
+        font-size: 14px;
+        font-weight: 700;
+        color: #222;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        transition: color 0.2s ease;
+    }
+
+    .project-cover:hover .details .title {
+        color: #666;
+    }
+
+    /* Footer */
+    .site-footer {
+        padding: 60px 0;
+        text-align: center;
+        color: #aaa;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) { .project-cover { width: 50%; } }
+    @media (max-width: 640px) { 
+        .project-cover { width: 100%; } 
+        .site-content { padding: 0 20px; }
+    }
+  </style>
+</head>
+
+<body class="transition-enabled">
+
+  <header class="site-header">
+      <div class="logo-wrap">
+        <div class="logo logo-text">
+            <a href="index.html">Alessandro Masciosci</a>
+        </div>
+      </div>
+  </header>
+
+  <div class="masthead">
+      <div class="masthead-contents">
+        <div class="masthead-text">
+          <h1>d3mo is where fragrance meets clarity—light stories, effortless shopping</h1>
+          <p>Scroll down to see more</p>
+        </div>
+      </div>
+  </div>
+
+  <div class="site-wrap">
+  <div class="site-container">
+    <div class="site-content">
+      <main>
+        <section class="project-covers">
+          
+          <div class="project-cover">
+            <a class="cover-content-container" href="#">
+              <div class="cover-image-wrap">
+                  <div class="cover">
+                    <img class="cover__img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" 
+                         data-src="https://cdn.myportfolio.com/4079b353-4cbf-4fed-94c3-47be502f990b/eabeca6e-7e7a-4ed0-8db3-75319e974565_car_202x158.jpeg?h=0fd44763753983123e27f1b0761250e7" 
+                         alt="Loading Sequence">
+                  </div>
+              </div>
+              <div class="details-wrap">
+                <div class="details">
+                  <div class="title">Loading Sequence</div>
+                </div>
+              </div>
+            </a>
+          </div>
+
+          <div class="project-cover">
+            <a class="cover-content-container" href="#">
+              <div class="cover-image-wrap">
+                  <div class="cover">
+                    <img class="cover__img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" 
+                         data-src="https://cdn.myportfolio.com/4079b353-4cbf-4fed-94c3-47be502f990b/bb99ba9e-49f5-4158-b3b2-129be30d9fc8_car_202x158.png?h=0c7a6101d9dc2fa54d34d36d2426abab" 
+                         alt="Home Page">
+                  </div>
+              </div>
+              <div class="details-wrap">
+                <div class="details">
+                  <div class="title">Home Page</div>
+                </div>
+              </div>
+            </a>
+          </div>
+
+          <div class="project-cover">
+            <a class="cover-content-container" href="#">
+              <div class="cover-image-wrap">
+                  <div class="cover">
+                    <img class="cover__img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" 
+                         data-src="https://cdn.myportfolio.com/4079b353-4cbf-4fed-94c3-47be502f990b/a14d9fe3-b3cc-426c-925c-f71bb8c90f3b_car_202x158.png?h=f42538678cdc462c6f72c3abc0ee909a" 
+                         alt="Best Seller">
+                  </div>
+              </div>
+              <div class="details-wrap">
+                <div class="details">
+                  <div class="title">Best Seller Rotation System</div>
+                </div>
+              </div>
+            </a>
+          </div>
+
+          <div class="project-cover">
+            <a class="cover-content-container" href="#">
+              <div class="cover-image-wrap">
+                  <div class="cover">
+                    <img class="cover__img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" 
+                         data-src="https://cdn.myportfolio.com/4079b353-4cbf-4fed-94c3-47be502f990b/2c01e3b3-55bb-48f3-9fae-7aeb1a0016bc_car_202x158.png?h=a5ed0bd0ef2330b8db97342a239053f2" 
+                         alt="Dynamic Grid">
+                  </div>
+              </div>
+              <div class="details-wrap">
+                <div class="details">
+                  <div class="title">Dynamic Product Grid</div>
+                </div>
+              </div>
+            </a>
+          </div>
+
+          <div class="project-cover">
+            <a class="cover-content-container" href="#">
+              <div class="cover-image-wrap">
+                  <div class="cover">
+                    <img class="cover__img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" 
+                         data-src="https://cdn.myportfolio.com/4079b353-4cbf-4fed-94c3-47be502f990b/d8cd6aba-b9dc-4bd2-b7fe-6910b3b3e51e_car_202x158.png?h=2ce07b8859558f702c0dd05e2ade6cfe" 
+                         alt="Product Overview">
+                  </div>
+              </div>
+              <div class="details-wrap">
+                <div class="details">
+                  <div class="title">Product Overview Module</div>
+                </div>
+              </div>
+            </a>
+          </div>
+
+        </section>
+
+        <footer class="site-footer">
+          <div class="footer-text">
+            All rights reserved &copy; 2025
+          </div>
+        </footer>
+      </main>
+    </div>
+  </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        
+        // 1. ATTIVA TRANSIZIONE DI ENTRATA (Usa le classi trovate da te)
+        // Rimuove 'transition-enabled' e aggiunge 'transition-in' dopo un istante
+        setTimeout(() => {
+            document.body.classList.remove('transition-enabled');
+            document.body.classList.add('transition-in');
+        }, 100);
+
+        // 2. GESTIONE IMMAGINI LAZY LOAD
+        const images = document.querySelectorAll('img[data-src]');
+        
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    img.src = img.getAttribute('data-src');
+                    img.onload = () => { img.classList.add('loaded'); };
+                    observer.unobserve(img);
+                }
+            });
+        }, { rootMargin: "200px" });
+
+        images.forEach(img => observer.observe(img));
+
+        // 3. TRANSIZIONE DI USCITA (Fade-out al click)
+        const links = document.querySelectorAll('a');
+        links.forEach(link => {
+            link.addEventListener('click', function(e) {
+                const href = this.getAttribute('href');
+                if (href && href !== '#' && !href.startsWith('http')) {
+                    e.preventDefault();
+                    document.body.classList.remove('transition-in');
+                    document.body.classList.add('transition-out'); // Usa la tua animazione
+                    setTimeout(() => { window.location.href = href; }, 250);
+                }
+            });
+        });
+    });
+  </script>
+
+</body>
+</html>
